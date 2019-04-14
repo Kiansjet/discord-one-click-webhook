@@ -8,6 +8,14 @@ let os = require('os')
 let webhook
 let loopEvent = new events.EventEmitter()
 
+function pressKeyToExit() {
+    console.log('\nPress any key to exit')
+
+    process.stdin.setRawMode(true)
+    process.stdin.resume()
+    process.stdin.on('data', process.exit.bind(process, 0))
+}
+
 console.log('Welcome to Kian\'s one-click-webhook!\n')
 
 prompt.start({noHandleSIGNINT: true}) // SIGINT is the ctrl c thing to escape
@@ -48,6 +56,7 @@ loopEvent.on('loop',function() {
             console.log('Sent: '+message.content+'\n')
         }).catch(function(err) {
             console.log('Error. Sending failed.\n'+err)
+            pressKeyToExit()
         })
         loopEvent.emit('loop')
     })
@@ -63,6 +72,7 @@ prompt.get(webhookPromptSchema,async function(err,result) {
         loopEvent.emit('loop')
     }).catch(function(err) {
         console.log('Connection failed.\n'+err)
+        pressKeyToExit()
     })
 })
 
